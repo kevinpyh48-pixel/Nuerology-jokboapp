@@ -547,6 +547,10 @@
   .casino .por.g1{border-color:var(--vote);background:var(--vote-soft);}
   .casino .por.g2{border-color:var(--prof);background:var(--prof-bg);}
   .casino .por.g3{border-color:var(--warn-line);background:var(--warn-bg);}
+  .casino .por.g4{border-color:var(--bad);background:var(--bad-bg);}
+  /* 얼굴이 이모지가 아니라 사진인 캐릭터(히든 병원장). 글자 크기를 따라가게 em 으로 잰다 */
+  .gface{width:1.15em;height:1.15em;object-fit:cover;border-radius:22%;vertical-align:-.2em;display:inline-block;}
+  .casino .por .gface,.greel .face .gface{width:100%;height:100%;border-radius:inherit;vertical-align:0;}   /* 큰 칸은 사진이 꽉 채운다 */
   .casino .mid{flex:1;min-width:0;}
   .casino .who{font-family:var(--font-display);font-size:17px;line-height:1.2;}
   .casino .whos{font-size:12.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -569,6 +573,7 @@
   .greel .face.g1{border-color:var(--vote);background:var(--vote-soft);}
   .greel .face.g2{border-color:var(--prof);background:var(--prof-bg);}
   .greel .face.g3{border-color:var(--warn-line);background:var(--warn-bg);}
+  .greel .face.g4{border-color:var(--bad);background:var(--bad-bg);}
   .greel .rk{font-family:var(--font-display);font-size:15px;letter-spacing:.08em;}
   .greel .nm{font-family:var(--font-display);font-size:26px;}
   .greel .ln{font-size:14.5px;color:var(--ink2);max-width:30ch;}
@@ -588,6 +593,7 @@
   .gtile[data-rep]:hover{border-color:var(--ink2);}
   .gtile.me{box-shadow:0 0 0 2px var(--accent) inset;}
   .gtile.g1{border-color:var(--vote)} .gtile.g2{border-color:var(--prof)} .gtile.g3{border-color:var(--warn-line)}
+  .gtile.g4{border-color:var(--bad)}
   /* ⚔ 대결 — 클래스는 전부 b 접두사다. 짧은 이름은 기존 유틸과 겹친다(.sr 전례). */
   .bbar{display:flex;gap:8px;align-items:center;margin:14px 0 6px;flex-wrap:wrap;}
   .bbar h3{font-family:var(--font-display);font-size:20px;color:var(--accent);margin:0;flex:1;}
@@ -631,7 +637,7 @@
     border:0;padding:0;overflow:hidden;--wc:var(--vote);
     background:radial-gradient(ellipse at 30% 20%,#2a2f5a 0%,#0b0d1f 60%,#05060f 100%);}
   dialog.gwish::backdrop{background:#05060f;}
-  .gwish.w2{--wc:var(--prof)} .gwish.w3{--wc:var(--warn-line)}
+  .gwish.w2{--wc:var(--prof)} .gwish.w3{--wc:var(--warn-line)} .gwish.w4{--wc:var(--bad)}
   .gwish::before{content:"";position:absolute;inset:0;opacity:.85;background-image:
     radial-gradient(1.5px 1.5px at 12% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 30% 72%,#fff 50%,transparent 51%),
     radial-gradient(1.5px 1.5px at 48% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 63% 55%,#fff 50%,transparent 51%),
@@ -5451,11 +5457,15 @@ function showUpdateBanner(){
     ["ais",     "🎚", "AIS scale",      2, "「A에서 E까지, 척수가 남긴 답」 S4-5 감각이 남았는지가 완전과 불완전을 가른다. 재활 p14~16, 반드시 출제",     "척수손상의 재활치료(김태욱 교수님)"],
     ["gbm",     "👑", "교모세포종",     3, "「IDH wildtype, 4등급의 왕」 ring enhancement 가운데 괴사를 품는다. 예후가 가장 나쁘고, 그래서 가장 자주 나온다",       "뇌종양 파트 I (총론_뇌교종)(이상구 교수님)"],
     ["iicp",    "🏆", "뇌압상승",       3, "「닫힌 두개골의 폭군」 Cushing 세 징후 — 혈압은 오르고 맥은 느려지고 숨은 흐트러진다. 윤정호 4문항의 심장, p9",      "두개강 내압(윤정호 교수님)"],
+    ["director","<img class=\"gface\" alt=\"\" src=\"data:image/webp;base64,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\">", "병원장", 4,
+                "「이 병원의 정점」 강의실 하나가 아니라 병원 전체가 교실이다. 블록 전체 정답률이 곧 이 카드의 힘 — 회진은 시험 다음 날 아침에",
+                "*"],
     ["acs",     "💎", "전척수증후군",   3, "「뒤만 남기고 앞을 앗아가는 검」 운동·통각·온도는 잃고 위치각·진동각은 남는다. 척수손상 p21, 빨간 글씨",                 "척수손상(김성진 교수님)"],
   ];
   const DECK_N = 3;
   /* [이름, CSS 클래스, 확률%] — 클래스는 g1~g3. `sr` 은 앱의 스크린리더 유틸과 겹쳐 쓰면 안 된다. */
-  const RANK = [["N","", 60], ["R","g1", 27], ["SR","g2", 10], ["SSR","g3", 3]];
+  /* 히든(4)은 1% — N 에서 떼어 왔다. 천장은 여전히 SR 이고, 히든은 천장 밖의 사건이다. */
+  const RANK = [["N","", 59], ["R","g1", 27], ["SR","g2", 10], ["SSR","g3", 3], ["히든","g4", 1]];
   const STARTERS = ["cortex", "gcs", "mca"];
   const byId = (id) => CHARS.find((c) => c[0] === id);
 
@@ -5480,7 +5490,7 @@ function showUpdateBanner(){
     const g = G(), repId = (g.deck && g.deck[0]) || g.rep, rep = repId && byId(repId);
     const por = $("g-por");
     por.className = "por" + (rep ? " " + RANK[rep[3]][1] : "");
-    por.textContent = rep ? rep[1] : "🎲";
+    por.innerHTML = rep ? rep[1] : "🎲";
     $("g-who").textContent = rep ? rep[2] : "캐릭터를 고르세요";
     $("g-line").textContent = rep ? rep[4] : "첫 캐릭터는 공짜입니다";
     const have = g.c % PULL_COST, ready = g.c >= PULL_COST;
@@ -5509,7 +5519,7 @@ function showUpdateBanner(){
     const rk = RANK[c[3]];
     return '<div class="greel">' +
       '<div class="face spin ' + rk[1] + '">' + c[1] + '</div>' +
-      '<div class="rk" style="color:' + (c[3] ? "var(--" + ["","vote","prof","warn"][c[3]] + ")" : "var(--ink2)") + '">' +
+      '<div class="rk" style="color:' + (c[3] ? "var(--" + ["","vote","prof","warn","bad"][c[3]] + ")" : "var(--ink2)") + '">' +
         "★".repeat(star) + " " + rk[0] + '</div>' +
       '<div class="nm">' + c[2] + '</div>' +
       '<div class="ln">' + c[4] + '</div>' +
@@ -5594,7 +5604,7 @@ function showUpdateBanner(){
      내 에이스를 세게 만들려면 그 강의 족보를 풀어야 한다.
      상대는 D1 의 다른 사람 편성(fn=rosters)이고, 없으면 연습 상대가 선다. */
   const DECK_MAX = DECK_N;
-  const BASE = [[26, 7], [34, 10], [46, 14], [62, 19]];   /* 등급별 [HP, 공격] */
+  const BASE = [[26, 7], [34, 10], [46, 14], [62, 19], [96, 30]];   /* 등급별 [HP, 공격] — 4=히든 */
   let _lecCache = null;
 
   /* 강의별 첫판 정답률 — 앱과 같은 기준(firstOk 또는 드릴 정복). 시트를 열 때 한 번만 센다. */
@@ -5617,7 +5627,9 @@ function showUpdateBanner(){
   }
   function unitOf(id, star){
     const c = byId(id); if (!c) return null;
-    const a = lecOk()[c[5]] || [0, 0];
+    /* 강의 "*" = 블록 전체(병원장). 한 강의가 아니라 모든 강의의 첫판 정답률을 합쳐 본다 */
+    const a = c[5] === "*" ? Object.values(lecOk()).reduce((t, v) => [t[0] + v[0], t[1] + v[1]], [0, 0])
+                           : (lecOk()[c[5]] || [0, 0]);
     const study = a[1] ? a[0] / a[1] : 0;             /* 0~1 */
     const sm = 1 + (Math.min(5, star || 1) - 1) * 0.12, dm = 1 + study * 0.5;
     const b = BASE[c[3]], hp = Math.round(b[0] * sm * dm);

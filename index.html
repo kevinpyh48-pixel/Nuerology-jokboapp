@@ -6173,6 +6173,17 @@ function showUpdateBanner(){
     g.c = (g.c | 0) + reward;
     g.duel = g.duel || { w: 0, l: 0, d: 0 };
     g.duel[res.win ? "w" : res.draw ? "d" : "l"]++;
+    /* 🏆 공개 전적 — **사람과 붙은 판만** 센다(foe.p). 봇전까지 세면 연습 상대를 몇 번 팼는지가
+       전적이 되고, 그건 남에게 보여 줄 값이 아니다. g.duel(로컬 표시)과 축이 다르다.
+       기록은 내 ⚔ 편성 행 하나에 같이 실려 나간다(duelDelta) — 테이블을 새로 파지 않았다.
+       도전한 쪽만 적으므로, 진 사람은 상대의 log 를 읽어서 자기가 졌다는 걸 안다. */
+    if (foe.p){
+      g.pvp = g.pvp || { w: 0, l: 0, d: 0 };
+      g.pvp[res.win ? "w" : res.draw ? "d" : "l"]++;
+      g.log = [{ v: foeName, r: res.win ? "w" : res.draw ? "d" : "l", t: Date.now() }]
+                .concat(g.log || []).slice(0, 5);
+      g.dts = Date.now();                              /* 델타 커서를 밀어야 다음 동기화에 올라간다 */
+    }
     GS(g); paintCasino();
     _lastFoe = { foe: foe, name: foeName };
 
@@ -6252,8 +6263,12 @@ function showUpdateBanner(){
         r.rosters.forEach((x) => {
           const u = (x.deck || []).map((d) => unitOf(d.id, d.s)).filter(Boolean);
           if (!u.length) return;
-          _foes[x.nick] = { u: u, rw: 15 };
-          h += foeRow(x.nick, "편성 " + u.length + "명 · 승리 🪙15", u);
+          _foes[x.nick] = { u: u, rw: 15, p: 1 };
+          const nw = x.w | 0, nl = x.l | 0, nd = x.d | 0, last = (x.log || [])[0];
+          h += foeRow(x.nick, "편성 " + u.length + "명 · 승리 🪙15" +
+            (nw + nl + nd ? " · 전적 " + nw + "승 " + nl + "패" + (nd ? " " + nd + "무" : "") : "") +
+            (last ? " · 최근 " + (last.r === "w" ? "🏆" : last.r === "d" ? "🤝" : "💀") +
+                    " vs " + last.v : ""), u);
         });
       } else {
         h = '<p class="sub">아직 다른 사람의 편성이 없습니다 — 앱을 받은 사람이 생기면 여기 뜹니다.</p>';
@@ -6280,13 +6295,17 @@ function showUpdateBanner(){
   function duelDelta(){
     const st = syncState(), g = G();
     if (!g.deck || !g.deck.length || !(ms(g.dts) > ms(st.pushed["⚔|roster"]))) return [];
+    const v = g.pvp || { w: 0, l: 0, d: 0 };
     return [{ id: "⚔|roster", day: "⚔", lec: "", src: "roster", ts: ms(g.dts),
-              deck: g.deck.map((id) => ({ id: id, s: g.own[id] | 0 })) }];
+              deck: g.deck.map((id) => ({ id: id, s: g.own[id] | 0 })),
+              w: v.w | 0, l: v.l | 0, d: v.d | 0, log: (g.log || []).slice(0, 5) }];
   }
   function duelMerge(it){
     const g = G();
     if (!(ms(it.ts) > ms(g.dts))) return;              /* 로컬이 더 새로우면 안 덮는다 */
     g.deck = (it.deck || []).map((d) => d.id).filter(byId).slice(0, DECK_MAX);
+    g.pvp = { w: it.w | 0, l: it.l | 0, d: it.d | 0 };  /* 같은 행에 실려 온 내 전적 */
+    if (Array.isArray(it.log)) g.log = it.log.slice(0, 5);
     g.dts = ms(it.ts); GS(g); paintCasino(); renderSlots();
   }
   window.duelDelta = duelDelta; window.duelMerge = duelMerge;
